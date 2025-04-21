@@ -2,11 +2,12 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { WHITELIST } from './constant.js';
+import errorHandler from './middlewares/errorHandler.js';
+
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
-
 app.use(
   cors({
     origin: function (origin, callback) {
@@ -19,4 +20,5 @@ app.use(
   }),
 );
 app.use(cookieParser());
+app.use(errorHandler);
 export { app };
