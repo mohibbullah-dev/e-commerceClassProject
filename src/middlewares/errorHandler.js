@@ -1,8 +1,10 @@
 import ApiError from '../utils/apiError.js';
 
 const errorHandler = (err, req, res, next) => {
-  //   throw ApiError.serverError(err.message, err.errors, err.errorCode);
-  return res.json(ApiError.serverError(err.message, err.errors, err.errorCode)); // good way
+  const { statusConde, message, errors, errorCode, stack } = err;
+  return res
+    .status(statusConde || 500)
+    .json(ApiError.custom(statusConde, message, errors, stack, errorCode));
 };
 
 export default errorHandler;
