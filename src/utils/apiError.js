@@ -63,6 +63,15 @@ class ApiError extends Error {
     return new ApiError(500, message, error, '', errorCode);
   }
 
+  // database error
+  static db_error(
+    message = 'database error',
+    errors = {},
+    errorCode = 'DB_500',
+  ) {
+    return new ApiError(500, message, errors, '', errorCode);
+  }
+
   //   custom error
   static custom(statusCode, message = 'Conflict', error = {}, errorCode = '') {
     return new ApiError(statusCode, message, error, '', errorCode);
