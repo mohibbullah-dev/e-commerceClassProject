@@ -7,11 +7,12 @@ const serverStart = async () => {
     await DB_Connection();
     app.listen(PORT, () => {
       console.log(
-        `server is running on the port ${PORT} http://localhost:8000/hello`,
+        `server is running on the port ${PORT} http://localhost:8000/`,
       );
     });
   } catch (error) {
-    console.log(`serverStart errpr ${error}`);
+    console.log(`serverStart error ${error}`);
+    process.exit(1);
   }
 };
 

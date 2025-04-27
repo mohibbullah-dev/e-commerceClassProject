@@ -3,7 +3,6 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { WHITELIST } from './constant.js';
 import errorHandler from './middlewares/errorHandler.js';
-import healthCheckerRoute from './routes/healthCheck.route.js';
 
 const app = express();
 app.use(express.json());
@@ -18,7 +17,11 @@ app.use(
 app.use(cookieParser());
 
 // all routes
+import healthCheckerRoute from './routes/healthCheck.route.js';
+import userRouter from './routes/user.router.js';
+
 app.use(healthCheckerRoute);
+app.use('/api/v1', userRouter);
 
 app.use(errorHandler);
 export { app };
