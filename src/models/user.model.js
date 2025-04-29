@@ -8,26 +8,31 @@ const userSchema = new Schema(
       unique: true,
     },
 
-    firsName: {
+    name: {
       type: String,
-      required: [true, 'firstname is required!'],
+      required: [true, 'name is required!'],
     },
-
-    lasename: {
-      type: String,
-      required: [true, 'lastname is required!'],
-    },
-
     email: {
       type: String,
-      required: [true, 'email is required!'],
+      required: true,
       unique: true,
     },
 
     password: {
       type: String,
-      required: [true, 'password is required!'],
-      unique: true,
+      default: null,
+    },
+    isVarified: {
+      type: Boolean,
+      default: false,
+    },
+    passwordResetToken: {
+      type: String,
+      default: null,
+    },
+    passwordResetExpires: {
+      type: Date,
+      default: null,
     },
     status: {
       type: String,
