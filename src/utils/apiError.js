@@ -14,6 +14,7 @@ class ApiError extends Error {
     this.message = message;
     this.errors = errors;
     this.errorCode = errorCode;
+
     if (stack) {
       this.stack = stack;
     } else {
@@ -73,8 +74,19 @@ class ApiError extends Error {
   }
 
   //   custom error
-  static custom(statusCode, message = 'Conflict', error = {}, errorCode = '') {
-    return new ApiError(statusCode, message, error, '', errorCode);
+  static custom(
+    statusCode,
+    message = 'Error',
+    errors = {},
+    stack = '',
+    errorCode = '',
+  ) {
+    const error = new ApiError(statusCode, message, errors, '', errorCode);
+    if (stack) {
+      error.stack = stack;
+    }
+    return error;
   }
 }
+
 export default ApiError;

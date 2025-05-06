@@ -22,6 +22,5 @@ import userRouter from './routes/user.router.js';
 
 app.use(healthCheckerRoute);
 app.use('/api/v1', userRouter);
-
 app.use(errorHandler);
 export { app };

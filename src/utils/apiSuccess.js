@@ -8,13 +8,13 @@ class ApiSuccess {
   }
 
   // 200 ok
-  static ok(data = {}, message = 'OK', meta = {}) {
+  static ok(message = 'OK', data = {}, meta = {}) {
     return new ApiSuccess(200, data, message, meta);
   }
 
   // 201 Created
-  static created(data = {}, message = 'Resource Created', meta = {}) {
-    return new ApiSuccess(201, data, message, meta);
+  static created(message = 'Resource Created', data = {}, meta = {}) {
+    return new ApiSuccess(201, message, data, meta);
   }
 
   // 204 No content (rare, data will be created)
@@ -23,7 +23,7 @@ class ApiSuccess {
   }
 
   // Custom Success
-  static custom(statusCode, message = 'Success', data = {}, meta = {}) {
+  static custom(message = 'Success', statusCode, data = {}, meta = {}) {
     return new ApiSuccess(statusCode, message, data, meta);
   }
 }
