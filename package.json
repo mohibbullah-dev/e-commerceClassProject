@@ -2,6 +2,7 @@
   "name": "expressproject",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "dependencies": {
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.7",
