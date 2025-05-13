@@ -23,7 +23,8 @@ const userUpdateSchema = z.object({
 });
 
 const userPasswordUpadateSchema = z.object({
-  password: z
+  oldPassword: z.string(),
+  newPassword: z
     .string()
     .regex(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/,

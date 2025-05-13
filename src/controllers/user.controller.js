@@ -37,8 +37,13 @@ const signup = asyncHandler(async (req, res) => {
 const VerifyEmail = asyncHandler(async (req, res) => {
   const { token } = req.query;
   if (!token) throw ApiError.badrequest('token is required');
-  const decodedToken = jwt.verify(token, JWT_SECRET);
-  if (!decodedToken) throw ApiError.badrequest('invalik token');
+
+  let decodedToken;
+  try {
+    decodedToken = jwt.verify(token, JWT_SECRET);
+  } catch (error) {
+    throw ApiError.unauthorized('invalid or expire access token.');
+  }
 
   const user = await User.findById(decodedToken.id).select(
     '-__v -password -passwordResetToken -passwordResetExpires -createdAt -updatedAt',
@@ -128,5 +133,27 @@ const UpdateUser = asyncHandler(async (req, res) => {
   await user.save();
   res.status(200).json(ApiSuccess.ok('user Updated', user));
 });
+const userPasswordUpadate = asyncHandler(async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+  const user = req.user;
+  if (oldPassword === newPassword) {
+    throw ApiError.badrequest('New password can not be same as oldPassword');
+  }
+  const isMatch = await user.comparePassword(oldPassword);
+  if (!isMatch) {
+    throw ApiError.badrequest('old password is incorrect');
+  }
+  user.password = newPassword;
+  // console.log('updated password:', user.password);
+  await user.save();
+  res.status(200).json(ApiSuccess.ok('password update'));
+});
 
-export { signup, VerifyEmail, signin, signOut, UpdateUser };
+export {
+  signup,
+  VerifyEmail,
+  signin,
+  signOut,
+  UpdateUser,
+  userPasswordUpadate,
+};
