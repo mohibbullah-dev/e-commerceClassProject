@@ -16,4 +16,24 @@ const userSigninSchema = z.object({
   password: z.string(),
 });
 
-export { userSignupSchema, userSigninSchema };
+const userUpdateSchema = z.object({
+  username: z.string().min(3),
+  name: z.string().min(5),
+  email: z.string().email(),
+});
+
+const userPasswordUpadateSchema = z.object({
+  password: z
+    .string()
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/,
+      'Password must contain at least one lowercase letter, one upercase letter, one number and be at least 8 characters longer',
+    ),
+});
+
+export {
+  userSignupSchema,
+  userSigninSchema,
+  userUpdateSchema,
+  userPasswordUpadateSchema,
+};

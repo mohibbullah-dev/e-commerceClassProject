@@ -95,4 +95,38 @@ const signOut = asyncHandler(async (req, res) => {
     .json(ApiSuccess.ok('user signOur successfully'));
 });
 
-export { signup, VerifyEmail, signin, signOut };
+const UpdateUser = asyncHandler(async (req, res) => {
+  const { username, name, email } = req.body;
+  const user = await User.findById(req.user._id);
+
+  if (user.username !== username) {
+    const isUsernameExists = await User.findOne({ username });
+    if (isUsernameExists) {
+      throw ApiError.badrequest('username already exists');
+    } else {
+      user.username = username;
+    }
+  }
+
+  if (user.email !== email) {
+    const isEmialExists = await User.findOne({ email });
+    if (isEmialExists) {
+      throw ApiError.badrequest('email already exists');
+    } else {
+      user.isVarified = false;
+      user.email = email;
+      const token = user.jwtToken();
+      const verifyUrl = `${APP_URL}/api/v1/users/verify/?token=${token}`;
+      sendEmail({
+        email,
+        name,
+        verifyUrl,
+      });
+    }
+  }
+  user.name = name;
+  await user.save();
+  res.status(200).json(ApiSuccess.ok('user Updated', user));
+});
+
+export { signup, VerifyEmail, signin, signOut, UpdateUser };

@@ -12,8 +12,8 @@ async function sendEmail(options) {
     host: 'smtp.ethereal.email',
     port: 587,
     auth: {
-      user: 'olaf.hagenes78@ethereal.email',
-      pass: 'yT6StAPVZaW8sbbVSq',
+      user: 'edgardo51@ethereal.email',
+      pass: 'kVDxCDKSF7SZQt4aSN',
     },
     tls: {
       rejectUnauthorized: false,

@@ -3,6 +3,7 @@ import {
   signin,
   signOut,
   signup,
+  UpdateUser,
   VerifyEmail,
 } from '../controllers/user.controller.js';
 import ValidationMiddleware from '../middlewares/validation.middleware.js';
@@ -17,5 +18,6 @@ router.post('/users/signup', ValidationMiddleware(userSignupSchema), signup);
 router.get('/users/verify', VerifyEmail);
 router.post('/users/signin', ValidationMiddleware(userSigninSchema), signin);
 router.get('/users/signout', auth, signOut);
+router.get('/users/user-update', auth, UpdateUser);
 
 export default router;
