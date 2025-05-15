@@ -32,9 +32,29 @@ const userPasswordUpadateSchema = z.object({
     ),
 });
 
+const userForgotPasswordSchema = z.object({
+  email: z.string().email(),
+});
+
+const userForgotPasswordOtpSchema = z.object({
+  otp: z.number(),
+});
+const userRestpasswordSchema = z.object({
+  otp: z.number(),
+  password: z
+    .string()
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/,
+      'Password must contain at least one lowercase letter, one upercase letter, one number and be at least 8 characters longer',
+    ),
+});
+
 export {
   userSignupSchema,
   userSigninSchema,
   userUpdateSchema,
   userPasswordUpadateSchema,
+  userForgotPasswordSchema,
+  userForgotPasswordOtpSchema,
+  userRestpasswordSchema,
 };

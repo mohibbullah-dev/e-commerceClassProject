@@ -3,8 +3,12 @@ import { User } from '../models/user.model.js';
 import ApiError from '../utils/apiError.js';
 import ApiSuccess from '../utils/apiSuccess.js';
 import asyncHandler from '../utils/asyncHandler.js';
-import sendEmail from '../utils/mail.js';
 import jwt from 'jsonwebtoken';
+import {
+  otpVerificationEmailFormat,
+  sendEmail,
+  varifyEmailMailFormate,
+} from '../utils/mail.js';
 
 const signup = asyncHandler(async (req, res) => {
   const { username, name, email, password } = req.body;
@@ -27,8 +31,8 @@ const signup = asyncHandler(async (req, res) => {
   const verifyUrl = `${APP_URL}/api/v1/users/verify/?token=${token}`;
   sendEmail({
     email,
-    name,
-    verifyUrl,
+    subject: 'Verify your email.',
+    mailFormate: varifyEmailMailFormate(name, verifyUrl),
   });
 
   res.status(200).json(ApiSuccess.created('user created', user));
@@ -124,8 +128,8 @@ const UpdateUser = asyncHandler(async (req, res) => {
       const verifyUrl = `${APP_URL}/api/v1/users/verify/?token=${token}`;
       sendEmail({
         email,
-        name,
-        verifyUrl,
+        subject: 'Verify your email.',
+        mailFormate: varifyEmailMailFormate(name, verifyUrl),
       });
     }
   }
@@ -149,6 +153,44 @@ const userPasswordUpadate = asyncHandler(async (req, res) => {
   res.status(200).json(ApiSuccess.ok('password update'));
 });
 
+const forgotPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+  if (!user) throw ApiError.notFound('user not found.');
+  const otp = Math.floor(1000 + Math.random() * 9000);
+
+  sendEmail({
+    email,
+    subject: 'Reset password',
+    mailFormate: otpVerificationEmailFormat(user.name, otp),
+  });
+  user.passwordResetToken = otp;
+  user.passwordResetExpires = Date.now() + 5 * 60 * 1000;
+  await user.save();
+  return res.status(200).json(ApiSuccess.ok('otp sent'));
+});
+
+const validateOtp = asyncHandler(async (req, res) => {
+  const { otp } = req.body;
+  const user = await User.findOne({ passwordResetToken: otp });
+  if (!user) throw ApiError.notFound('invalid otp.');
+  if (user.passwordResetExpires < Date.now())
+    throw ApiError.notFound('invalid otp.');
+
+  return res.status(200).json(ApiSuccess.ok('otp verified.'));
+});
+
+const resetPassword = asyncHandler(async (req, res) => {
+  const { otp, password } = req.body;
+  const user = await User.findOne({ passwordResetToken: otp });
+  if (!user) throw ApiError.notFound('invalid otp.');
+  user.password = password;
+  user.passwordResetToken = null;
+  user.passwordResetExpires = null;
+  await user.save();
+  return res.status(200).json(ApiSuccess.ok('password reseted.'));
+});
+
 export {
   signup,
   VerifyEmail,
@@ -156,4 +198,7 @@ export {
   signOut,
   UpdateUser,
   userPasswordUpadate,
+  forgotPassword,
+  validateOtp,
+  resetPassword,
 };

@@ -12,40 +12,22 @@ async function sendEmail(options) {
     host: 'smtp.ethereal.email',
     port: 587,
     auth: {
-      user: 'edgardo51@ethereal.email',
-      pass: 'kVDxCDKSF7SZQt4aSN',
+      user: 'sylvester.schmidt@ethereal.email',
+      pass: 'EpWRsjhhmaF2pqs822',
     },
     tls: {
       rejectUnauthorized: false,
     },
   });
 
-  const mailFormat = {
-    body: {
-      name: options.name,
-      intro: `Welcome to nike! We're very excited to have you on board.`,
-      action: {
-        instructions: 'To get started with nike, please click here:',
-        button: {
-          color: '#22BC66', // Optional action button color
-          text: 'verify your email',
-          link: options.verifyUrl,
-          // link: 'https://www.youtube.com/',
-        },
-      },
-      outro:
-        "Need help, or have questions? Just reply to this email, we'd love to help.",
-    },
-  };
-
-  const { emailBody, emailText } = mailgenCofig(mailFormat);
+  const { emailBody, emailText } = mailgenCofig(options.mailFormate);
 
   // Wrap in an async IIFE so we can use await.
   try {
     const mail = await transporter.sendMail({
       from: '"Nike" <contact@gmail.com>',
       to: options.email,
-      subject: 'Hello Mohammed',
+      subject: options.subject,
       text: emailText, // plain‑text body
       html: emailBody, // HTML body
     });
@@ -56,7 +38,7 @@ async function sendEmail(options) {
   }
 }
 
-function mailgenCofig(mailFormat) {
+function mailgenCofig(mailFormate) {
   const mailGenerator = new Mailgen({
     theme: 'default',
     product: {
@@ -68,12 +50,54 @@ function mailgenCofig(mailFormat) {
     },
   });
 
-  const emailBody = mailGenerator.generate(mailFormat);
+  const emailBody = mailGenerator.generate(mailFormate);
 
   // Generate the plaintext version of the e-mail (for clients that do not support HTML)
-  const emailText = mailGenerator.generatePlaintext(mailFormat);
+  const emailText = mailGenerator.generatePlaintext(mailFormate);
 
   return { emailBody, emailText };
 }
 
-export default sendEmail;
+// mailFormates starts here
+
+const varifyEmailMailFormate = (name, verifyUrl) => {
+  return {
+    body: {
+      name: name,
+      intro: `Welcome to nike! We're very excited to have you on board.`,
+      action: {
+        instructions: 'To get started with nike, please click here:',
+        button: {
+          color: '#22BC66', // Optional action button color
+          text: 'verify your email',
+          link: verifyUrl,
+          // link: 'https://www.youtube.com/',
+        },
+      },
+      outro:
+        "Need help, or have questions? Just reply to this email, we'd love to help.",
+    },
+  };
+};
+
+const otpVerificationEmailFormat = (name, otp) => {
+  return {
+    body: {
+      name: name,
+      intro: "Welcome to Nike! We're excited to have you join us.",
+      action: {
+        instructions:
+          'To verify your account, please use the following One-Time Password (OTP):',
+        button: {
+          color: '#22BC66',
+          text: otp,
+          link: null, // No link needed for OTP
+        },
+      },
+      outro:
+        "Need help or have questions? Just reply to this email — we're happy to help.",
+    },
+  };
+};
+
+export { sendEmail, varifyEmailMailFormate, otpVerificationEmailFormat };

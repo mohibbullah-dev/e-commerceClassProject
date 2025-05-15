@@ -5,15 +5,23 @@ import asyncHandler from '../utils/asyncHandler.js';
 import jwt from 'jsonwebtoken';
 
 const auth = asyncHandler(async (req, res, next) => {
-  const token = req.cookies.accessToken;
+  const token = req.cookies?.accessToken;
+  //  ||
+  // req.header('Authorization')?.replace('Bearer', '');
 
   if (!token)
     throw ApiError.unauthorized('you are not logedIn').replace('Bearer', '');
 
-  const decodedToken = jwt.verify(token, ACCESS_TOKEN_SECRET);
-  if (!decodedToken) throw ApiError.unauthorized('you are not logedIn');
+  let decodedToken;
+  try {
+    decodedToken = jwt.verify(token, ACCESS_TOKEN_SECRET);
+  } catch (error) {
+    throw ApiError.unauthorized('invalid or expire access token.');
+  }
+  if (!decodedToken?.id)
+    throw ApiError.unauthorized('token does not container valid user info.');
   const user = await User.findById(decodedToken.id);
-  if (!user) throw ApiError.unauthorized('you are not logedIn');
+  if (!user) throw ApiError.unauthorized('user no longer exists.');
   req.user = user;
   next();
 });
