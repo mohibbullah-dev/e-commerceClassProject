@@ -12,8 +12,8 @@ async function sendEmail(options) {
     host: MAIL_SERVICE,
     port: MAIL_PORT,
     auth: {
-      user: 'bryce.lubowitz7@ethereal.email',
-      pass: 'eURpMfsvWDcYEG3Zaq',
+      user: MAIL_USER,
+      pass: MAIL_PASS,
     },
     tls: {
       rejectUnauthorized: false,
