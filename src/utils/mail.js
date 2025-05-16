@@ -9,11 +9,11 @@ async function sendEmail(options) {
 
   // Create a test account or replace with real credentials.
   const transporter = nodemailer.createTransport({
-    host: 'smtp.ethereal.email',
-    port: 587,
+    host: MAIL_SERVICE,
+    port: MAIL_PORT,
     auth: {
-      user: 'sylvester.schmidt@ethereal.email',
-      pass: 'EpWRsjhhmaF2pqs822',
+      user: 'bryce.lubowitz7@ethereal.email',
+      pass: 'eURpMfsvWDcYEG3Zaq',
     },
     tls: {
       rejectUnauthorized: false,

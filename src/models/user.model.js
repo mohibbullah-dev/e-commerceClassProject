@@ -17,6 +17,7 @@ const userSchema = new Schema(
       required: [true, 'userName is required!'],
       unique: true,
       index: true,
+      lowercase: true,
     },
 
     name: {
@@ -50,6 +51,21 @@ const userSchema = new Schema(
       type: String,
       enum: ['active', 'inactive', 'suspended'],
       default: 'active',
+    },
+    accountType: {
+      type: String,
+      enum: ['local', 'google'],
+      default: 'local',
+    },
+    avatar: {
+      url: {
+        type: String,
+        default: null,
+      },
+      public_id: {
+        type: String,
+        default: null,
+      },
     },
   },
   { timestamps: true },

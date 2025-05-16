@@ -1,4 +1,14 @@
-import { APP_URL, JWT_SECRET } from '../constant.js';
+import {
+  APP_URL,
+  GOOGLE_ACCESS_TOKEN_URL,
+  GOOGLE_CALLBACK_URL,
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  GOOGLE_OAUTH_SCOPES,
+  GOOGLE_OAUTH_URL,
+  GOOGLE_TOKEN_INFO_URL,
+  JWT_SECRET,
+} from '../constant.js';
 import { User } from '../models/user.model.js';
 import ApiError from '../utils/apiError.js';
 import ApiSuccess from '../utils/apiSuccess.js';
@@ -104,6 +114,91 @@ const signOut = asyncHandler(async (req, res) => {
     .json(ApiSuccess.ok('user signOur successfully'));
 });
 
+// signWithGoogle starts
+
+const signingWithGoogle = asyncHandler(async (req, res) => {
+  const state = 'some_state';
+  const scopes = GOOGLE_OAUTH_SCOPES.join(' ');
+  const GOOGLE_OAUTH_CONSENT_SCREEN_URL = `${GOOGLE_OAUTH_URL}?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${GOOGLE_CALLBACK_URL}&access_type=offline&response_type=code&state=${state}&scope=${scopes}`;
+  res.redirect(GOOGLE_OAUTH_CONSENT_SCREEN_URL);
+});
+
+const GoogleCallback = asyncHandler(async (req, res) => {
+  const { code } = req.query;
+
+  const data = {
+    code,
+    client_id: GOOGLE_CLIENT_ID,
+    client_secret: GOOGLE_CLIENT_SECRET,
+    redirect_uri: GOOGLE_CALLBACK_URL,
+    grant_type: 'authorization_code',
+  };
+
+  const response = await fetch(GOOGLE_ACCESS_TOKEN_URL, {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+
+  const access_token_data = await response.json();
+  const { id_token } = access_token_data;
+  const token_info_response = await fetch(
+    `${GOOGLE_TOKEN_INFO_URL}?id_token=${id_token}`,
+  );
+  const token_info = await token_info_response.json();
+
+  const userCreated = await User.findOneAndUpdate(
+    {
+      email: token_info.email,
+    },
+    {
+      username: (
+        token_info.name + Math.floor(1000 + Math.random() * 9000)
+      ).replace(' ', ''),
+      name: token_info.name,
+      email: token_info.email,
+      isVarified: token_info.email_verified,
+      accountType: 'google',
+      avatar: {
+        url: token_info.picture,
+      },
+    },
+    {
+      upsert: true,
+      new: true,
+    },
+  );
+  const user = await User.findById(userCreated._id).select(
+    '-__v -password -passwordResetToken -passwordResetExpires -createdAt -updatedAt',
+  );
+
+  const accessToken = user.accessToken();
+  const refreshToken = user.refreshToken();
+
+  const cookieOptions = {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'strict',
+  };
+
+  return res
+    .cookie('accessToken', accessToken, {
+      ...cookieOptions,
+      maxAge: 24 * 60 * 60 * 1000,
+    })
+    .cookie('refreshToken', refreshToken, {
+      ...cookieOptions,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    })
+    .status(token_info_response.status)
+    .json(
+      ApiSuccess.ok(
+        `user sigined in accessToken:${accessToken}, refreshToken:${refreshToken}`,
+      ),
+    );
+});
+
+// signWithGoogle ends here
+
 const UpdateUser = asyncHandler(async (req, res) => {
   const { username, name, email } = req.body;
   const user = await User.findById(req.user._id);
@@ -201,4 +296,6 @@ export {
   forgotPassword,
   validateOtp,
   resetPassword,
+  signingWithGoogle,
+  GoogleCallback,
 };

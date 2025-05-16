@@ -1,8 +1,10 @@
 import e from 'express';
 import {
   forgotPassword,
+  GoogleCallback,
   resetPassword,
   signin,
+  signingWithGoogle,
   signOut,
   signup,
   UpdateUser,
@@ -59,5 +61,7 @@ router.post(
   ValidationMiddleware(userRestpasswordSchema),
   resetPassword,
 );
+router.get('/users/google-signing', signingWithGoogle);
+router.get('/users/google/callback', GoogleCallback);
 
 export default router;
