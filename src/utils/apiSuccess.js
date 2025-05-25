@@ -9,7 +9,7 @@ class ApiSuccess {
 
   // 200 ok
   static ok(message = 'OK', data = {}, meta = {}) {
-    return new ApiSuccess(200, data, message, meta);
+    return new ApiSuccess(200, message, data, meta);
   }
 
   // 201 Created

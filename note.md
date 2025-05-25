@@ -36,3 +36,8 @@ HTML) var emailText = mailGenerator.generatePlaintext(email);
 return { emailBody, emailText }; }
 
 export { sendEMail };
+
+
+
+
+oAuth link: https://permify.co/post/oauth-20-implementation-nodejs-expressjs/

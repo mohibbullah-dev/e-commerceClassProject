@@ -19,6 +19,7 @@ import {
   sendEmail,
   varifyEmailMailFormate,
 } from '../utils/mail.js';
+import { fileUpload } from '../utils/fileUpload.js';
 
 const signup = asyncHandler(async (req, res) => {
   const { username, name, email, password } = req.body;
@@ -80,6 +81,7 @@ const signin = asyncHandler(async (req, res) => {
   console.log('email id: ', email);
   const user = await User.findOne({ email });
   if (!user) throw ApiError.notFound('invalid credentials');
+  if (user.isVarified === false) throw ApiError.forbiden('user not varified.');
 
   const isMatch = await user.comparePassword(password);
   if (!isMatch) throw ApiError.notFound('invalid credentials');
@@ -257,7 +259,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
   sendEmail({
     email,
     subject: 'Reset password',
-    mailFormate: otpVerificationEmailFormat(user.name, otp),
+    mailFormate: otpVerificationEmailFormat(otp),
   });
   user.passwordResetToken = otp;
   user.passwordResetExpires = Date.now() + 5 * 60 * 1000;
@@ -286,6 +288,33 @@ const resetPassword = asyncHandler(async (req, res) => {
   return res.status(200).json(ApiSuccess.ok('password reseted.'));
 });
 
+const avatarUpload = asyncHandler(async (req, res) => {
+  const avatar = req.file;
+  const user = req.user;
+  const result = await fileUpload(avatar.path, {
+    folder: 'avatar',
+    use_filenames: true,
+    unique_filename: true,
+    overwrite: true,
+    resource_type: 'image',
+    transformation: [
+      { width: 300, height: 300, crop: 'fill', gravity: 'face' },
+      { radius: 'max' },
+    ],
+    public_id: req.user._id,
+  });
+
+  user.avatar = {
+    public_id: result.public_id,
+    url: result.secure_url,
+  };
+  return res.status(200).json(ApiSuccess.ok('file Uploaded.', user));
+});
+
+const me = asyncHandler(async (req, res) => {
+  return res.status(200).json(ApiSuccess.ok('user found.', req.user));
+});
+
 export {
   signup,
   VerifyEmail,
@@ -298,4 +327,6 @@ export {
   resetPassword,
   signingWithGoogle,
   GoogleCallback,
+  avatarUpload,
+  me,
 };

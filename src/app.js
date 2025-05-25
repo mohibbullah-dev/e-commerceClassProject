@@ -17,7 +17,7 @@ app.use(
 app.use(cookieParser());
 
 // all routes starts
-import healthCheckerRoute from './routes/healthCheck.route.js';
+import healthCheckerRoute from './routes/healthCheck.route.js'; 
 import userRouter from './routes/user.router.js';
 
 app.use(healthCheckerRoute);

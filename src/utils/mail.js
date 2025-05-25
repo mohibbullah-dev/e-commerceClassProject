@@ -22,7 +22,6 @@ async function sendEmail(options) {
 
   const { emailBody, emailText } = mailgenCofig(options.mailFormate);
 
-  // Wrap in an async IIFE so we can use await.
   try {
     const mail = await transporter.sendMail({
       from: '"Nike" <contact@gmail.com>',

@@ -39,6 +39,11 @@ const GOOGLE_OAUTH_SCOPES = [
   'https%3A//www.googleapis.com/auth/userinfo.profile',
 ];
 
+// coundinary
+const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;
+const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY;
+const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET;
+
 export {
   APP_URL,
   PORT,
@@ -62,4 +67,7 @@ export {
   GOOGLE_OAUTH_URL,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
+  CLOUDINARY_CLOUD_NAME,
+  CLOUDINARY_API_KEY,
+  CLOUDINARY_API_SECRET,
 };

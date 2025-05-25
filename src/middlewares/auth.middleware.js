@@ -20,7 +20,9 @@ const auth = asyncHandler(async (req, res, next) => {
   }
   if (!decodedToken?.id)
     throw ApiError.unauthorized('token does not container valid user info.');
-  const user = await User.findById(decodedToken.id);
+  const user = await User.findById(decodedToken.id).select(
+    '-__v -password -passwordResetToken -passwordResetExpires -createdAt -updatedAt',
+  );
   if (!user) throw ApiError.unauthorized('user no longer exists.');
   req.user = user;
   next();
