@@ -3,6 +3,7 @@ import auth from '../middlewares/auth.middleware.js';
 import {
   createCategory,
   getCategories,
+  getCategory,
 } from '../controllers/category.controller.js';
 import { upload } from '../middlewares/fileUpload.middleware.js';
 import ValidationMiddleware from '../middlewares/validation.middleware.js';
@@ -21,5 +22,6 @@ router
     ValidationMiddleware(createCategorySchema),
     createCategory,
   );
+router.get('/categories/:slug', auth, getCategory);
 
 export default router;

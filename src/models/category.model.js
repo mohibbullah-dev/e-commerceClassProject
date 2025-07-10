@@ -9,7 +9,7 @@ const category = new Schema(
 
     slug: {
       type: String,
-      // require: true,
+      require: true,
       unique: true,
     },
     image: {
@@ -22,10 +22,10 @@ const category = new Schema(
         required: true,
       },
     },
-    subcategoreis: [
+    subcategories: [
       {
         type: Schema.Types.ObjectId,
-        ref: 'Subcategoreis',
+        ref: 'Subcategory',
       },
     ],
   },

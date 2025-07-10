@@ -4,9 +4,10 @@ import ApiSuccess from '../utils/apiSuccess.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import { fileUpload } from '../utils/fileUpload.js';
 import { categoryImageSchema } from '../validators/category.validator.js';
+import { Subcategory } from '../models/subcategory.model.js';
 
 const getCategories = asyncHandler(async (req, res) => {
-  const categories = await Category.find().populate('subcategoreis');
+  const categories = await Category.find().populate('subcategories');
   if (categories.length === 0) {
     return res
       .status(200)
@@ -53,4 +54,11 @@ const createCategory = asyncHandler(async (req, res) => {
   return res.status(201).json(ApiSuccess.ok('category created', category));
 });
 
-export { createCategory, getCategories };
+const getCategory = asyncHandler(async (req, res) => {
+  const { slug } = req.params;
+  const category = await Category.findOne({ slug }).populate('subcategories');
+  if (!category) throw ApiError.badrequest('category not found');
+  return res.status(200).json(ApiSuccess.ok('Category fitched', category));
+});
+
+export { createCategory, getCategories, getCategory };
