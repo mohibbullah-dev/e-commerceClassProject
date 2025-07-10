@@ -20,6 +20,7 @@ import {
   varifyEmailMailFormate,
 } from '../utils/mail.js';
 import { fileUpload } from '../utils/fileUpload.js';
+import { avatarUploadSchema } from '../validators/user.validator.js';
 
 const signup = asyncHandler(async (req, res) => {
   const { username, name, email, password } = req.body;
@@ -236,11 +237,14 @@ const UpdateUser = asyncHandler(async (req, res) => {
 });
 const userPasswordUpadate = asyncHandler(async (req, res) => {
   const { oldPassword, newPassword } = req.body;
-  const user = req.user;
+  // const user = req.user;
+  const user = await User.findById(req.user._id);
+  console.log('user valu:', user);
   if (oldPassword === newPassword) {
     throw ApiError.badrequest('New password can not be same as oldPassword');
   }
   const isMatch = await user.comparePassword(oldPassword);
+  console.log('isMatch valu:', isMatch);
   if (!isMatch) {
     throw ApiError.badrequest('old password is incorrect');
   }
@@ -291,10 +295,13 @@ const resetPassword = asyncHandler(async (req, res) => {
 const avatarUpload = asyncHandler(async (req, res) => {
   const avatar = req.file;
   const user = req.user;
+  const avatarValidation = avatarUploadSchema.safeParse(avatar);
+  if (avatarValidation.error) throw ApiError.badrequest('avatar is required.');
+
   const result = await fileUpload(avatar.path, {
     folder: 'avatar',
     use_filenames: true,
-    unique_filename: true,
+    // unique_filename: true,
     overwrite: true,
     resource_type: 'image',
     transformation: [
@@ -305,10 +312,11 @@ const avatarUpload = asyncHandler(async (req, res) => {
   });
 
   user.avatar = {
-    public_id: result.public_id,
     url: result.secure_url,
+    public_id: result.public_id,
   };
-  return res.status(200).json(ApiSuccess.ok('file Uploaded.', user));
+  await user.save();
+  return res.status(200).json(ApiSuccess.ok('file Uploaded.', result));
 });
 
 const me = asyncHandler(async (req, res) => {

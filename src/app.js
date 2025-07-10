@@ -17,11 +17,13 @@ app.use(
 app.use(cookieParser());
 
 // all routes starts
-import healthCheckerRoute from './routes/healthCheck.route.js'; 
+import healthCheckerRoute from './routes/healthCheck.route.js';
 import userRouter from './routes/user.router.js';
+import categoryRoute from './routes/category.router.js';
 
 app.use(healthCheckerRoute);
 app.use('/api/v1', userRouter);
+app.use('/api/v1', categoryRoute);
 // all routes ends
 
 app.use(errorHandler);

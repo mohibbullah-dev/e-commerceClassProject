@@ -1,6 +1,6 @@
 import { v2 as cloudinary } from 'cloudinary';
 import asyncHandler from './asyncHandler.js';
-import { unlinkSync } from 'fs';
+import { existsSync, unlinkSync } from 'fs';
 // Configuration
 cloudinary.config({
   cloud_name: 'dwcbvfptd',
@@ -13,9 +13,11 @@ cloudinary.config({
 const fileUpload = asyncHandler(async (file, options) => {
   try {
     const data = await cloudinary.uploader.upload(file, { ...options });
-    unlinkSync(file);
+    if (existsSync(file)) unlinkSync(file);
     return data;
-  } catch (error) {}
+  } catch (error) {
+    if (existsSync(file)) unlinkSync(file);
+  }
 });
 export { fileUpload };
 
