@@ -4,6 +4,7 @@ import {
   createCategory,
   getCategories,
   getCategory,
+  updateCategory,
 } from '../controllers/category.controller.js';
 import { upload } from '../middlewares/fileUpload.middleware.js';
 import ValidationMiddleware from '../middlewares/validation.middleware.js';
@@ -22,6 +23,15 @@ router
     ValidationMiddleware(createCategorySchema),
     createCategory,
   );
-router.get('/categories/:slug', auth, getCategory);
+
+router
+  .get('/categories/:slug', auth, getCategory)
+  .put(
+    '/categories/:slugParam',
+    auth,
+    upload.single('image'),
+    ValidationMiddleware(createCategorySchema),
+    updateCategory,
+  );
 
 export default router;

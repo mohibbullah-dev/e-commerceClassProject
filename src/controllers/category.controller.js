@@ -24,7 +24,6 @@ const createCategory = asyncHandler(async (req, res) => {
   let { name, slug } = req.body;
   const isNameExist = await Category.findOne({ name });
   if (isNameExist) throw ApiError.badrequest('name is already exist');
-
   const isSlugExsits = await Category.findOne({ slug });
   if (isSlugExsits) throw ApiError.badrequest('slug is already exist');
   if (!slug) {
@@ -61,4 +60,45 @@ const getCategory = asyncHandler(async (req, res) => {
   return res.status(200).json(ApiSuccess.ok('Category fitched', category));
 });
 
-export { createCategory, getCategories, getCategory };
+const updateCategory = asyncHandler(async (req, res) => {
+  const { slugParam } = req.params;
+  const { slug, name } = req.body;
+  const category = await Category.findOne({ slug: slugParam });
+  if (!category) throw ApiError.notFound('Category not found');
+
+  const isNameExist = await Category.findOne({
+    _id: { $ne: category._id },
+    name,
+  });
+  if (isNameExist) throw ApiError.badrequest('name is already exist');
+  const isSlugExsits = await Category.findOne({
+    _id: { $ne: category._id },
+    slug,
+  });
+  if (isSlugExsits) throw ApiError.badrequest('slug is already exist');
+  if (!slug) {
+    slug = name.toLowerCase().replaceAll(' ', '-');
+  }
+
+  const { image } = req.file;
+  let result;
+  if (image) {
+    result = await fileUpload(image.path, {
+      folder: 'categories',
+      use_filenames: true,
+      overwrite: true,
+      resource_type: 'image',
+      public_id: name,
+    });
+    category.image = {
+      url: result.secure_url,
+      public_id: result.public_id,
+    };
+  }
+  category.name = name;
+  category.slug = slug;
+  await category.save();
+  res.status(200).json(ApiSuccess.ok('Category updated', category));
+});
+
+export { createCategory, getCategories, getCategory, updateCategory };
