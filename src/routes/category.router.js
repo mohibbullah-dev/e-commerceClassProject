@@ -2,6 +2,7 @@ import e from 'express';
 import auth from '../middlewares/auth.middleware.js';
 import {
   createCategory,
+  deleteCategory,
   getCategories,
   getCategory,
   updateCategory,
@@ -33,5 +34,7 @@ router
     ValidationMiddleware(createCategorySchema),
     updateCategory,
   );
+
+router.delete('/categories/:slugParam', auth, deleteCategory);
 
 export default router;
