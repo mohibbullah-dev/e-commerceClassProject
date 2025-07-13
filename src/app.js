@@ -20,10 +20,13 @@ app.use(cookieParser());
 import healthCheckerRoute from './routes/healthCheck.route.js';
 import userRouter from './routes/user.router.js';
 import categoryRoute from './routes/category.router.js';
+import subcategoryRoute from './routes/subcategory.router.js';
 
 app.use(healthCheckerRoute);
 app.use('/api/v1', userRouter);
 app.use('/api/v1', categoryRoute);
+app.use('/api/v1', subcategoryRoute);
+
 // all routes ends
 
 app.use(errorHandler);

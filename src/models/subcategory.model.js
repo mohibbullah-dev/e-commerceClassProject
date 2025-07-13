@@ -11,9 +11,10 @@ const subcategoreis = new Schema(
       type: String,
       // require: true,
       unique: true,
+      index: true,
     },
 
-    imame: {
+    image: {
       url: {
         type: String,
         required: true,
@@ -27,6 +28,11 @@ const subcategoreis = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'Category',
       required: true,
+      default: null,
+    },
+    createdBy: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
     },
   },
   { timestamps: true },

@@ -11,6 +11,7 @@ const category = new Schema(
       type: String,
       require: true,
       unique: true,
+      index: true,
     },
     image: {
       url: {
@@ -22,12 +23,17 @@ const category = new Schema(
         // required: true,
       },
     },
-    subcategories: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: 'Subcategory',
-      },
-    ],
+    // subcategories: [
+    //   {
+    //     type: Schema.Types.ObjectId,
+    //     ref: 'Subcategory',
+    //   },
+    // ],
+    createdBy: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      default: null,
+    },
   },
   { timestamps: true },
 );

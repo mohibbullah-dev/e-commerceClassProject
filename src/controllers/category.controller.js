@@ -7,7 +7,9 @@ import { categoryImageSchema } from '../validators/category.validator.js';
 import { Subcategory } from '../models/subcategory.model.js';
 
 const getCategories = asyncHandler(async (req, res) => {
-  const categories = await Category.find().populate('subcategories');
+  const categories = await Category.find({
+    $or: [{ createdBy: req.user._id }, { createdBy: null }],
+  });
   if (categories.length === 0) {
     return res
       .status(200)
@@ -49,21 +51,28 @@ const createCategory = asyncHandler(async (req, res) => {
       url: result.secure_url,
       public_id: result.public_id,
     },
+    createdBy: req.user._id,
   });
   return res.status(201).json(ApiSuccess.ok('category created', category));
 });
 
 const getCategory = asyncHandler(async (req, res) => {
-  const { slug } = req.params;
-  const category = await Category.findOne({ slug }).populate('subcategories');
+  const { slugParam } = req.params;
+  const category = await Category.find({ slug: slugParam });
+  const subcategory = await Subcategory.find({ category: category._id });
+
   if (!category) throw ApiError.badrequest('category not found');
-  return res.status(200).json(ApiSuccess.ok('Category fitched', category));
+  return res
+    .status(200)
+    .json(ApiSuccess.ok('Category fitched', { category, subcategory }));
 });
 
 const updateCategory = asyncHandler(async (req, res) => {
   const { slugParam } = req.params;
   const { slug, name } = req.body;
-  const category = await Category.findOne({ slug: slugParam });
+  const category = await Category.findOne({
+    $and: [{ slug: slugParam }, { createdBy: req.user._id }],
+  });
   if (!category) throw ApiError.notFound('Category not found');
 
   const isNameExist = await Category.findOne({
@@ -79,7 +88,6 @@ const updateCategory = asyncHandler(async (req, res) => {
   if (!slug) {
     slug = name.toLowerCase().replaceAll(' ', '-');
   }
-
   const { image } = req.file;
   let result;
   if (image) {
@@ -103,9 +111,11 @@ const updateCategory = asyncHandler(async (req, res) => {
 
 const deleteCategory = asyncHandler(async (req, res) => {
   const { slugParam } = req.params;
-  const category = await Category.findOneAndDelete({ slug: slugParam });
+  const category = await Category.findOneAndDelete({
+    $and: [{ slug: slugParam }, { createdBy: req.user._id }],
+  });
   if (!category) throw ApiError.notFound('Category not found');
-  res.status(200).json(ApiSuccess.ok('Category deleted'));
+  res.status(200).json(ApiSuccess.noContent('Category deleted'));
 });
 
 export {
