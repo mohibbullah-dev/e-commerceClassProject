@@ -87,7 +87,7 @@ const updatesubcategory = asyncHandler(async (req, res) => {
   if (!slug) {
     slug = name.toLowerCase().replaceAll(' ', '-');
   }
-  const { image } = req.file;
+  const image = req.file;
   let result;
   if (image) {
     result = await fileUpload(image.path, {

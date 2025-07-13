@@ -68,9 +68,9 @@ const getCategory = asyncHandler(async (req, res) => {
 });
 
 const updateCategory = asyncHandler(async (req, res) => {
-  const { slugParam } = req.params;
-  const { slug, name } = req.body;
-  const category = await Category.findOne({
+  let { slugParam } = req.params;
+  let { slug, name } = req.body;
+  let category = await Category.findOne({
     $and: [{ slug: slugParam }, { createdBy: req.user._id }],
   });
   if (!category) throw ApiError.notFound('Category not found');
@@ -88,7 +88,8 @@ const updateCategory = asyncHandler(async (req, res) => {
   if (!slug) {
     slug = name.toLowerCase().replaceAll(' ', '-');
   }
-  const { image } = req.file;
+  // const { image } = req.file;
+  const image = req.file;
   let result;
   if (image) {
     result = await fileUpload(image.path, {
@@ -115,6 +116,7 @@ const deleteCategory = asyncHandler(async (req, res) => {
     $and: [{ slug: slugParam }, { createdBy: req.user._id }],
   });
   if (!category) throw ApiError.notFound('Category not found');
+  await Subcategory.deleteMany({ category: category._id });
   res.status(200).json(ApiSuccess.noContent('Category deleted'));
 });
 
