@@ -1,4 +1,4 @@
-import { Schema } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
 const groupSchema =
   ({
@@ -17,5 +17,19 @@ const groupSchema =
         type: String,
       },
     },
+    createdBy: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    members: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
   },
-  {});
+  { timestamps: true });
+
+export const Group =
+  mongoose.models.Group || mongoose.model('Group', groupSchema);
