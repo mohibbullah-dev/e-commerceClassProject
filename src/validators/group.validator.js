@@ -5,4 +5,8 @@ const createGroupSchema = z.object({
   //   image: z.any(),
 });
 
-export default createGroupSchema;
+const addGroupmemberSchema = z.object({
+  members: z.array(z.string()).min(1),
+});
+
+export { createGroupSchema, addGroupmemberSchema };

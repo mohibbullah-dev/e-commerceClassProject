@@ -51,7 +51,7 @@ const addMembers = asyncHandler(async (req, res) => {
 
   existedGroup.members = [...existedGroup.members, ...newMembers];
   await existedGroup.save();
-  return res.status(201).json(ApiSuccess.created('new memers is added'));
+  return res.status(201).json(ApiSuccess.created('new members are added'));
 });
 
 export { creatGroup, addMembers };
