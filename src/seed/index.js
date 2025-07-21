@@ -4,7 +4,7 @@ const seedCalling = async () => {
   // await seedUpload();
 
   seedFuncCall().catch((err) => {
-    console.error('Seeding error ❌:', err);
+    console.error('Seeding error:', err);
     mongoose.disconnect();
   });
 };

@@ -28,18 +28,20 @@ const limiter = rateLimit({
   // store: ... , // Redis, Memcached, etc. See below.
 });
 
-app.use(limiter);
+// app.use(limiter);
 
 // all routes starts
 import healthCheckerRoute from './routes/healthCheck.route.js';
 import userRouter from './routes/user.router.js';
 import categoryRoute from './routes/category.router.js';
 import subcategoryRoute from './routes/subcategory.router.js';
+import groupRoute from './routes/group.route.js';
 
 app.use(healthCheckerRoute);
 app.use('/api/v1', userRouter);
 app.use('/api/v1', categoryRoute);
 app.use('/api/v1', subcategoryRoute);
+app.use('/api/v1', groupRoute);
 
 // all routes ends
 

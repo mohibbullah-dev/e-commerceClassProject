@@ -95,8 +95,3 @@ async function seed() {
 }
 
 export default seed;
-
-// .catch((err) => {
-//   console.error('Seeding error ❌:', err);
-//   mongoose.disconnect();
-// });
