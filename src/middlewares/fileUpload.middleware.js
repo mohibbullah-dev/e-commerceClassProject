@@ -5,7 +5,7 @@ import path from 'path';
 let allowedFileextension = ['.png', '.jpeg', '.jpg', '.pdf'];
 
 const fileFilter = (req, file, cb) => {
-  log(file);
+  // log(file);
   if (allowedFileextension.includes(path.extname(file.originalname))) {
     cb(null, true);
   } else {

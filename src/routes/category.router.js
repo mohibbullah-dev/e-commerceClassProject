@@ -25,15 +25,14 @@ router
     createCategory,
   );
 
-router
-  .get('/categories/:slug', auth, getCategory)
-  .put(
-    '/categories/:slugParam',
-    auth,
-    upload.single('image'),
-    ValidationMiddleware(createCategorySchema),
-    updateCategory,
-  );
+router.get('/categories/:slugParam', auth, getCategory);
+router.put(
+  '/categories/:slugParam',
+  auth,
+  upload.single('image'),
+  ValidationMiddleware(createCategorySchema),
+  updateCategory,
+);
 
 router.delete('/categories/:slugParam', auth, deleteCategory);
 

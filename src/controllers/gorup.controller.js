@@ -28,6 +28,38 @@ const creatGroup = asyncHandler(async (req, res) => {
   }
 });
 
+const grouptUpdate = asyncHandler(async (req, res) => {
+  const { groupId } = req.params;
+  const existedGroup = await Group.findById(groupId);
+  if (!existedGroup) throw ApiError.notFound('group is not found');
+
+  const groupLogo = req.file;
+  if (groupLogo) {
+    const result = await fileUpload(groupLogo.path, {
+      folder: 'group',
+      use_filename: true,
+      resource_type: 'image',
+      overwrite: true,
+      pulic_id: req.body.name + Date.now(),
+    });
+    console.log(result);
+    req.body.image = {
+      url: result.secure_url,
+      pulic_id: result.public_id,
+    };
+    const groupName = await Group.findOne({
+      $and: [{ name: req.body.name }, { createdBy: req.user._id }],
+    });
+    if (groupName) throw ApiError.badrequest('groupName already exists');
+    const group = await Group.findOneAndUpdate(
+      { _id: groupId },
+      { $set: { ...req.body } },
+      { new: true },
+    );
+    return res.status(201).json(ApiSuccess.ok('Group Updated', group));
+  }
+});
+
 const addMembers = asyncHandler(async (req, res) => {
   const { groupId } = req.params;
   if (!groupId) throw ApiError.badrequest('groupId is not found!');
@@ -54,4 +86,4 @@ const addMembers = asyncHandler(async (req, res) => {
   return res.status(201).json(ApiSuccess.created('new members are added'));
 });
 
-export { creatGroup, addMembers };
+export { creatGroup, addMembers, grouptUpdate };

@@ -58,10 +58,9 @@ const createCategory = asyncHandler(async (req, res) => {
 
 const getCategory = asyncHandler(async (req, res) => {
   const { slugParam } = req.params;
-  const category = await Category.find({ slug: slugParam });
+  const category = await Category.findOne({ slug: slugParam });
+  if (category.length == 0) throw ApiError.notFound('Category not foune');
   const subcategory = await Subcategory.find({ category: category._id });
-
-  if (!category) throw ApiError.badrequest('category not found');
   return res
     .status(200)
     .json(ApiSuccess.ok('Category fitched', { category, subcategory }));
@@ -117,7 +116,7 @@ const deleteCategory = asyncHandler(async (req, res) => {
   });
   if (!category) throw ApiError.notFound('Category not found');
   await Subcategory.deleteMany({ category: category._id });
-  res.status(200).json(ApiSuccess.noContent('Category deleted'));
+  return res.status(200).json(ApiSuccess.noContent('Category deleted'));
 });
 
 export {
