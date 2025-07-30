@@ -9,6 +9,7 @@ import {
 import {
   addMembers,
   creatGroup,
+  groupDelete,
   grouptUpdate,
 } from '../controllers/gorup.controller.js';
 
@@ -22,13 +23,7 @@ router
     ValidationMiddleware(createGroupSchema),
     creatGroup,
   );
-router.route(
-  '/groups/:groupId',
-  auth,
-  upload.single('image'),
-  ValidationMiddleware(createGroupSchema),
-  grouptUpdate,
-);
+
 router
   .route('/groups/update/:groupId')
   .post(
@@ -38,6 +33,7 @@ router
     grouptUpdate,
   );
 
+router.route('/groups/delete/:groupId').delete(auth, groupDelete);
 router
   .route('/groups/addMembers/:groupId')
   .post(auth, ValidationMiddleware(addGroupmemberSchema), addMembers);

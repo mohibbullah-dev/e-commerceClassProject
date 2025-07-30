@@ -12,7 +12,7 @@ const groupSchema = new Schema(
       url: {
         type: String,
       },
-      pulic_id: {
+      public_id: {
         type: String,
       },
     },

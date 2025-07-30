@@ -10,15 +10,19 @@ cloudinary.config({
 
 // Upload an image
 
-const fileUpload = asyncHandler(async (file, options) => {
+const fileUpload = async (file, options = {}, oldPublicId = null) => {
   try {
+    if (oldPublicId) {
+      const destroy_image = await cloudinary.uploader.destroy(oldPublicId);
+      console.log('destroy_image result: ', destroy_image);
+    }
     const data = await cloudinary.uploader.upload(file, { ...options });
     if (existsSync(file)) unlinkSync(file);
     return data;
   } catch (error) {
     if (existsSync(file)) unlinkSync(file);
   }
-});
+};
 export { fileUpload };
 
 // // Optimize delivery by resizing and applying auto-format and auto-quality

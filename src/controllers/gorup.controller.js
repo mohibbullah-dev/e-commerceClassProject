@@ -60,6 +60,20 @@ const grouptUpdate = asyncHandler(async (req, res) => {
   }
 });
 
+const groupDelete = asyncHandler(async (req, res) => {
+  const { groupId } = req.params;
+  const userId = req.user._id;
+  console.log('groupId result:', groupId);
+  console.log('userId result:', userId);
+
+  const existsGroup = await Group.findOneAndDelete({
+    $and: [{ _id: groupId }, { createdBy: userId }],
+  });
+  console.log('existsGroup result:', existsGroup);
+  if (!existsGroup) throw ApiError.notFound('group is not found');
+  return res.status(200).json(ApiSuccess.ok('Group is deleted', existsGroup));
+});
+
 const addMembers = asyncHandler(async (req, res) => {
   const { groupId } = req.params;
   if (!groupId) throw ApiError.badrequest('groupId is not found!');
@@ -86,4 +100,4 @@ const addMembers = asyncHandler(async (req, res) => {
   return res.status(201).json(ApiSuccess.created('new members are added'));
 });
 
-export { creatGroup, addMembers, grouptUpdate };
+export { creatGroup, addMembers, grouptUpdate, groupDelete };
