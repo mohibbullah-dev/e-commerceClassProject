@@ -74,6 +74,21 @@ const groupDelete = asyncHandler(async (req, res) => {
   return res.status(200).json(ApiSuccess.ok('Group is deleted', existsGroup));
 });
 
+const getAllgroups = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+  if (!userId) throw ApiError.notFound('not Groups found');
+  const groups = await Group.find({ members: { $in: userId } });
+  if (groups.length == 0) throw ApiError.badrequest('no groupd created yet');
+  return res.status(200).json(ApiSuccess.ok(' groups fitched', groups));
+});
+
+const getMygroups = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+  const groups = await Group.find({ createdBy: userId });
+  if (groups.length == 0) throw ApiError.notFound('no group available');
+  return res.status(200).json(ApiSuccess.ok('groups fitched', groups));
+});
+
 const addMembers = asyncHandler(async (req, res) => {
   const { groupId } = req.params;
   if (!groupId) throw ApiError.badrequest('groupId is not found!');
@@ -100,4 +115,11 @@ const addMembers = asyncHandler(async (req, res) => {
   return res.status(201).json(ApiSuccess.created('new members are added'));
 });
 
-export { creatGroup, addMembers, grouptUpdate, groupDelete };
+export {
+  creatGroup,
+  addMembers,
+  grouptUpdate,
+  groupDelete,
+  getMygroups,
+  getAllgroups,
+};

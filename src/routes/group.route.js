@@ -9,6 +9,8 @@ import {
 import {
   addMembers,
   creatGroup,
+  getAllgroups,
+  getMygroups,
   groupDelete,
   grouptUpdate,
 } from '../controllers/gorup.controller.js';
@@ -22,7 +24,9 @@ router
     upload.single('image'),
     ValidationMiddleware(createGroupSchema),
     creatGroup,
-  );
+  )
+  .get(auth, getAllgroups);
+router.route('/groups/my-groups').get(auth, getMygroups);
 
 router
   .route('/groups/update/:groupId')
