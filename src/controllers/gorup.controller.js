@@ -115,6 +115,23 @@ const addMembers = asyncHandler(async (req, res) => {
   return res.status(201).json(ApiSuccess.created('new members are added'));
 });
 
+const removeGroupmembers = asyncHandler(async (req, res) => {
+  const { groupId } = req.params;
+  const userId = req.user._id;
+  const { members } = req.body;
+
+  const existsGroup = await Group.findOneAndUpdate(
+    { _id: groupId, createdBy: userId },
+    { $pull: { members: { $in: members } } },
+    { new: true },
+  );
+  if (!existsGroup) throw ApiError.notFound('group is not Found');
+
+  return res
+    .status(200)
+    .json(ApiSuccess.ok('group members removed', existsGroup));
+});
+
 export {
   creatGroup,
   addMembers,
@@ -122,4 +139,5 @@ export {
   groupDelete,
   getMygroups,
   getAllgroups,
+  removeGroupmembers,
 };

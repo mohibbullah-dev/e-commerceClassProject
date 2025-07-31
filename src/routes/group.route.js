@@ -13,6 +13,7 @@ import {
   getMygroups,
   groupDelete,
   grouptUpdate,
+  removeGroupmembers,
 } from '../controllers/gorup.controller.js';
 
 const router = e.Router();
@@ -41,5 +42,8 @@ router.route('/groups/delete/:groupId').delete(auth, groupDelete);
 router
   .route('/groups/addMembers/:groupId')
   .post(auth, ValidationMiddleware(addGroupmemberSchema), addMembers);
+router
+  .route('/groups/remove-group-member/:groupId')
+  .delete(auth, ValidationMiddleware(addGroupmemberSchema), removeGroupmembers);
 
 export default router;
