@@ -12,6 +12,10 @@ const expenseSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'Category',
     },
+    subcategory: {
+      type: Schema.Types.ObjectId,
+      ref: 'Subcategory',
+    },
     date: {
       type: Date,
     },

@@ -69,12 +69,11 @@ const groupDelete = asyncHandler(async (req, res) => {
   const userId = req.user._id;
   console.log('groupId result:', groupId);
   console.log('userId result:', userId);
-
   const existsGroup = await Group.findOneAndDelete({
     $and: [{ _id: groupId }, { createdBy: userId }],
   });
-  console.log('existsGroup result:', existsGroup);
   if (!existsGroup) throw ApiError.notFound('group is not found');
+  await deleteFile(existsGroup.image.public_id);
   return res.status(200).json(ApiSuccess.ok('Group is deleted', existsGroup));
 });
 
