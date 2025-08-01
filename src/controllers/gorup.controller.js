@@ -2,7 +2,7 @@ import { Group } from '../models/group.model.js';
 import ApiError from '../utils/apiError.js';
 import ApiSuccess from '../utils/apiSuccess.js';
 import asyncHandler from '../utils/asyncHandler.js';
-import { fileUpload } from '../utils/fileUpload.js';
+import { deleteFile, fileUpload } from '../utils/fileUpload.js';
 
 const creatGroup = asyncHandler(async (req, res) => {
   const groupExist = await Group.findOne({
@@ -20,9 +20,8 @@ const creatGroup = asyncHandler(async (req, res) => {
     });
     req.body.image = {
       url: result.secure_url,
-      pulic_id: result.public_id,
+      public_id: result.public_id,
     };
-
     const group = await Group.create({ ...req.body, createdBy: req.user._id });
     return res.status(201).json(ApiSuccess.ok('Group created', group));
   }
@@ -47,8 +46,13 @@ const grouptUpdate = asyncHandler(async (req, res) => {
       url: result.secure_url,
       pulic_id: result.public_id,
     };
+    await deleteFile(existedGroup.image.public_id);
     const groupName = await Group.findOne({
-      $and: [{ name: req.body.name }, { createdBy: req.user._id }],
+      $and: [
+        { _id: { $ne: groupId } },
+        { name: req.body.name },
+        { createdBy: req.user._id },
+      ],
     });
     if (groupName) throw ApiError.badrequest('groupName already exists');
     const group = await Group.findOneAndUpdate(

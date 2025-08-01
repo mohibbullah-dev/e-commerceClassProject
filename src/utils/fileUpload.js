@@ -1,6 +1,7 @@
 import { v2 as cloudinary } from 'cloudinary';
 import asyncHandler from './asyncHandler.js';
 import { existsSync, unlinkSync } from 'fs';
+import ApiError from './apiError.js';
 // Configuration
 cloudinary.config({
   cloud_name: 'dwcbvfptd',
@@ -10,12 +11,8 @@ cloudinary.config({
 
 // Upload an image
 
-const fileUpload = async (file, options = {}, oldPublicId = null) => {
+const fileUpload = async (file, options = {}) => {
   try {
-    if (oldPublicId) {
-      const destroy_image = await cloudinary.uploader.destroy(oldPublicId);
-      console.log('destroy_image result: ', destroy_image);
-    }
     const data = await cloudinary.uploader.upload(file, { ...options });
     if (existsSync(file)) unlinkSync(file);
     return data;
@@ -23,7 +20,17 @@ const fileUpload = async (file, options = {}, oldPublicId = null) => {
     if (existsSync(file)) unlinkSync(file);
   }
 };
-export { fileUpload };
+
+const deleteFile = async (publicId) => {
+  try {
+    await cloudinary.uploader.destroy(publicId, {
+      invalidate: true,
+    });
+  } catch (error) {
+    throw ApiError.serverError(error.message);
+  }
+};
+export { fileUpload, deleteFile };
 
 // // Optimize delivery by resizing and applying auto-format and auto-quality
 // const optimizeUrl = cloudinary.url('shoes', {
