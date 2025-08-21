@@ -1,9 +1,6 @@
-// import seedUpload from './image.seed.js';
-import seedFuncCall from './categoriesAnadsubcategories.seed.js';
+import seed from './categoriesAnadsubcategories.seed.js';
 const seedCalling = async () => {
-  // await seedUpload();
-
-  seedFuncCall().catch((err) => {
+  seed().catch((err) => {
     console.error('Seeding error:', err);
     mongoose.disconnect();
   });

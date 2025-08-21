@@ -25,12 +25,44 @@
 
 // getImagePath(mainDirPath);
 
+// import { fileUpload } from '../utils/fileUpload.js';
+// import fs from 'fs';
+// import path from 'path';
+
+// const mainDirPath = path.resolve('./public/images');
+
+// const getImagePath = (dir) => {
+//   const files = fs.readdirSync(dir);
+//   return files.map((file) => {
+//     const fullPath = path.join(dir, file);
+//     return fullPath;
+//   });
+// };
+// console.log(getImagePath(mainDirPath));
+
+// const seeUpload = async () => {
+//   const data = await Promise.all(
+//     getImagePath(mainDirPath).map(async (path) => {
+//       return await fileUpload(path, {
+//         folder: 'seedinFiles',
+//         use_filenames: true,
+//         overwrite: true,
+//         resource_type: 'image',
+//       });
+//     }),
+//   );
+//   return data;
+// };
+
+// export default seeUpload;
+
 import { fileUpload } from '../utils/fileUpload.js';
 import fs from 'fs';
 import path from 'path';
 
 const mainDirPath = path.resolve('./public/images');
 
+// লোকাল ফাইল লিস্ট পাওয়ার জন্য
 const getImagePath = (dir) => {
   const files = fs.readdirSync(dir);
   return files.map((file) => {
@@ -38,20 +70,21 @@ const getImagePath = (dir) => {
     return fullPath;
   });
 };
-console.log(getImagePath(mainDirPath));
 
-const resolve = async () => {
+// আসল uploader function
+const seedUpload = async () => {
   const data = await Promise.all(
-    getImagePath(mainDirPath).map(async (path) => {
-      return await fileUpload(path, {
+    getImagePath(mainDirPath).map(async (filePath) => {
+      const res = await fileUpload(filePath, {
         folder: 'seedinFiles',
-        use_filenames: true,
+        use_filename: true,
         overwrite: true,
         resource_type: 'image',
       });
+      return res;
     }),
   );
   return data;
 };
 
-export default resolve;
+export { seedUpload };
