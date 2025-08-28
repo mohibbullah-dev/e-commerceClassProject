@@ -5,18 +5,22 @@ import {
   deleteMyexpens,
   getAllexpense,
   getAllExpensesPaidByme,
+  oneToOneExpens,
   updateMyexpense,
 } from '../controllers/expense.controller.js';
 import ValidationMiddleware from '../middlewares/validation.middleware.js';
-import { createIndividualExpensSchema } from '../validators/expens.validator.js';
+import {
+  createIndividualExpensSchema,
+  createOne_To_One_Expen_Schema,
+} from '../validators/expens.validator.js';
 const router = e.Router();
 
 router
-  .route('/expenses/individual')
+  .route('/expenses/on-to-one-expen')
   .post(
     auth,
-    ValidationMiddleware(createIndividualExpensSchema),
-    createMyexpense,
+    ValidationMiddleware(createOne_To_One_Expen_Schema),
+    oneToOneExpens,
   )
   .get(auth, getAllexpense);
 

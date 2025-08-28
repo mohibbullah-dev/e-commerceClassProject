@@ -52,10 +52,20 @@ const getAllExpensesPaidByme = asyncHandler(async (req, res) => {
     .json(ApiSuccess.ok('all expenses fitched paid By me', expenses));
 });
 
+const oneToOneExpens = asyncHandler(async (req, res) => {
+  const data = await Expens.create({
+    ...req.body,
+    createdBy: req.user._id,
+  });
+
+  return res.status(201).json({ message: 'oneToOneExpens created', data });
+});
+
 export {
   createMyexpense,
   updateMyexpense,
   deleteMyexpens,
   getAllexpense,
   getAllExpensesPaidByme,
+  oneToOneExpens,
 };
