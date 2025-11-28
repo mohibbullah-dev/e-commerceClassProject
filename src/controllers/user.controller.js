@@ -58,7 +58,7 @@ const VerifyEmail = asyncHandler(async (req, res) => {
   try {
     decodedToken = jwt.verify(token, JWT_SECRET);
   } catch (error) {
-    throw ApiError.unauthorized('invalid or expire access token.');
+    throw ApiError.unauthorized('invalid or expire token.');
   }
 
   const user = await User.findById(decodedToken.id).select(

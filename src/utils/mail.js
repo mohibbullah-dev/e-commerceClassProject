@@ -4,10 +4,8 @@ import { MAIL_PASS, MAIL_PORT, MAIL_SERVICE, MAIL_USER } from '../constant.js';
 import ApiError from './apiError.js';
 
 async function sendEmail(options) {
-  console.log('hello! i am from mail.js file');
-  console.log(options);
 
-  // Create a test account or replace with real credentials.
+// Create a test account or replace with real credentials.
   const transporter = nodemailer.createTransport({
     host: MAIL_SERVICE,
     port: MAIL_PORT,
